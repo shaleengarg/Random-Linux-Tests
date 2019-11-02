@@ -26,7 +26,7 @@ using namespace std;
 double getntime(struct timespec *begin, struct timespec *end)
 {
     return (((end->tv_sec - begin->tv_sec)*1000000000) + \
-            (end->tv_nsec - begin->tv_nsec)); //Time in nanoseconds
+            (end->tv_nsec - begin->tv_nsec))/1000; //Time in microseconds
 }
 
 size_t getFilesize(const char* filename) {
@@ -39,15 +39,21 @@ int main(int argc, char const *argv[])
 {
     int cpid[MAX];
     double *time;// = malloc(sizeof(double)*MAX);
-    if(argc != 2)
+    if(argc != 3)
     {
-        cout << "try ./a.out NOCHild #change the name of the file in the source" << endl;
+        cout << "try ./a.out NOCHild Mode #change the name of the file in the source" << endl;
+        cout << "Mode == 1 for MAP_POPULATE, 0 for not POPULATE" << endl;
+        exit(-1);
     }
 
     size_t filesize = getFilesize(file);
 
     int NChildren = 1;
     NChildren = atoi(argv[1]);
+
+    int Mode = false;
+    Mode = atoi(argv[2]);
+
     struct timespec start, end;
 
     int shmid;
@@ -85,8 +91,12 @@ int main(int argc, char const *argv[])
             assert(fd > 0);
 
             clock_gettime(CLOCK_REALTIME, &start);
-            char *mem = (char*) mmap(NULL, filesize, PROT_READ|PROT_WRITE, MAP_SHARED | MAP_POPULATE, fd, 0);
-            //char *mem = (char*) mmap(NULL, filesize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+            char *mem;
+            if(Mode == 1)
+                mem = (char*) mmap(NULL, filesize, PROT_READ|PROT_WRITE, MAP_SHARED | MAP_POPULATE, fd, 0);
+            else
+                mem = (char*) mmap(NULL, filesize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+
             if(mem == MAP_FAILED)
                 cout << "mmap failed with errno " << strerror(errno);
             //and read completely
@@ -116,6 +126,6 @@ int main(int argc, char const *argv[])
         tottime += time[i];
     }
     double avgtime = tottime/NChildren;
-    printf("AvgTime to read the complete file is %lf milliseconds\n", avgtime/1000000);
+    printf("AvgTime to read the complete file is %lf seconds\n", avgtime/1000000);
     return 0;
 }
