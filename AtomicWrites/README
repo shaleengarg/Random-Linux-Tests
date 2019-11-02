@@ -1,0 +1,12 @@
+In this test, I am trying to see if I can write a struct atomically by using bitwise operators
+
+
+Here we have a 64 Bytes of cacheline size
+each integer is 8 Bytes - > So we can have 8 integers
+
+OK -> Realization
+When we left shift a variable, it is left shifted in its bit space, not in cache line.
+
+Hence it is difficult to write something greater than a variable atomically using left shifts
+
+ie. To write a complete cache line(say) at once needs some support from instrinsics
