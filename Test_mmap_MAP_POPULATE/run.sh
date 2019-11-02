@@ -12,7 +12,7 @@ then
 fi
 
 echo "This test requires 4GB of DiskSpace and atleast 4GB RAM"
-##dd if=/dev/urandom of=randomfile.txt bs=4096 count=1048576
+dd if=/dev/urandom of=randomfile.txt bs=4096 count=1048576
 
 make -j
 a=`nproc`
