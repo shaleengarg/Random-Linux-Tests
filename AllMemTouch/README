@@ -1,0 +1,6 @@
+This program:
+1. Finds the amount of memory we have on this system.
+2. Finds the number of threads available in this system.
+3. Divide the memory among each thread.
+4. Allocate a 10th of each mem in each thread and touch each page in success
+5. Also unmap each block
