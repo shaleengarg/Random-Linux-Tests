@@ -1,0 +1,6 @@
+The linux kernel has a little prefetching engine for reads:
+
+Observation:
+1. while forward sequential reads are identified by this prefetching engine, it is unable to identify backward sequential reads.
+
+This is primarily because the engine checks the last 32 pages (128KB ) of page cache to determine if the reads are sequential. It doesnt look at the leading pages 
